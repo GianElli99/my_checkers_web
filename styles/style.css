@@ -60,7 +60,6 @@ main {
   flex-wrap: wrap;
 }
 #board {
-  max-width: 80%;
   box-shadow: 10px 10px 15px grey;
 }
 #start-match {
@@ -89,8 +88,8 @@ main {
   font-weight: 500;
 }
 .player-image {
-  width: 100%;
-  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   margin-bottom: 15px;
 }
 .remaining-pieces {
@@ -153,14 +152,17 @@ footer {
   .player {
     flex-direction: row;
     max-width: 100%;
-    max-height: 150px;
+    max-height: 30vw;
     margin: 20px 0;
   }
   .player-image {
-    max-width: 30%;
     max-height: inherit;
-    width: auto;
-    height: 70%;
     margin-bottom: 0;
+  }
+  .cell {
+    height: 11vw;
+    width: 11vw;
+    max-width: 100px;
+    max-height: 100px;
   }
 }
