@@ -2,28 +2,56 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 100vh;
 }
 main {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 }
 #game {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   width: 100%;
 }
 #board {
   max-width: 80%;
+  box-shadow: 10px 10px 15px grey;
+}
+.player {
+  max-width: 10%;
+  min-width: 40px;
 }
 .row {
   display: flex;
 }
 .cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 8vw;
   width: 8vw;
-  max-width: 60px;
-  max-height: 60px;
-  border: 1px solid red;
+  max-width: 80px;
+  max-height: 80px;
+}
+.dark {
+  background-color: rgb(125, 135, 150);
+}
+.light {
+  background-color: rgb(232, 235, 239);
+}
+.piece {
+  border-radius: 50%;
+  width: 85%;
+  height: 85%;
+  border: 2px solid black;
+  box-shadow: 2px 2px 5px grey;
+}
+.piece-player-1 {
+  background-color: rgb(242, 242, 242);
+}
+.piece-player-2 {
+  background-color: rgb(48, 48, 48);
 }
