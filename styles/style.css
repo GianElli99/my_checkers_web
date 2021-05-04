@@ -1,10 +1,52 @@
 body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 100vh;
+  width: 100%;
+  background-color: rgb(226, 226, 226);
+}
+a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+}
+header {
+  min-height: 120px;
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  background: #1d2d44;
+}
+#access {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-around;
+  justify-content: space-around;
+  margin-right: 20px;
+  padding-inline-start: 0;
+}
+#access li {
+  list-style-type: none;
+  margin: 0 10px;
+  white-space: nowrap;
+}
+#access li a {
+  box-sizing: border-box;
+}
+#sign-up {
+  border: 1px solid white;
+  border-radius: 3px;
+  padding: 5px;
+}
+h1 {
+  font-weight: 200;
+  font-size: 2.5rem;
+  padding-left: 20px;
 }
 main {
+  padding: 50px 0;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -12,17 +54,47 @@ main {
 }
 #game {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   width: 100%;
+  flex-wrap: wrap;
 }
 #board {
   max-width: 80%;
   box-shadow: 10px 10px 15px grey;
 }
+#start-match {
+  padding: 15px;
+  margin: 20px;
+  background-color: transparent;
+  border-radius: 5px;
+  border: 2px solid #0d1321;
+  color: #0d1321;
+  cursor: pointer;
+  transition-duration: 0.4s;
+}
+#start-match:hover {
+  color: white;
+  background-color: #0d1321;
+}
 .player {
   max-width: 10%;
-  min-width: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+.player-image {
+  width: 100%;
+  height: auto;
+  margin-bottom: 15px;
+}
+.remaining-pieces {
+  margin: 15px;
 }
 .row {
   display: flex;
@@ -54,4 +126,41 @@ main {
 }
 .piece-player-2 {
   background-color: rgb(48, 48, 48);
+}
+footer {
+  height: 150px;
+  color: white;
+  background: #1d2d44;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  align-content: space-around;
+  flex-wrap: wrap;
+}
+.footer-item {
+  font-size: 1.5rem;
+  width: 33.33%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  min-width: 150px;
+}
+
+@media (max-width: 930px) {
+  #game {
+    flex-direction: column;
+  }
+  .player {
+    flex-direction: row;
+    max-width: 100%;
+    max-height: 150px;
+    margin: 20px 0;
+  }
+  .player-image {
+    max-width: 30%;
+    max-height: inherit;
+    width: auto;
+    height: 70%;
+    margin-bottom: 0;
+  }
 }

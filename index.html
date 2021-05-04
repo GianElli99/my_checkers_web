@@ -7,20 +7,31 @@
 
     <link rel="stylesheet" href="./styles/normalize.css" />
     <link rel="stylesheet" href="./styles/style.css" />
+    <link
+      rel="shortcut icon"
+      href="./images/checkers.png"
+      type="image/x-icon"
+    />
 
     <title>Checkers</title>
   </head>
   <body>
     <header>
       <h1>Checkers Online</h1>
-      <ul>
+      <ul id="access">
         <li><a id="sign-in" href="#">Sign In</a></li>
         <li><a id="sign-up" href="#">Sign Up</a></li>
       </ul>
     </header>
     <main>
       <div id="game">
-        <div id="player-1" class="player"></div>
+        <div id="player-1" class="player">
+          <img src="./images/man.png" class="player-image" alt="Man picture" />
+          <div>Player 1</div>
+          <div id="remaining-pieces-player-1" class="remaining-pieces">
+            Pieces: 12
+          </div>
+        </div>
         <div id="board">
           <div id="row-8" class="row">
             <div id="row-8-col-a" class="cell light"></div>
@@ -151,30 +162,21 @@
             <div id="row-1-col-h" class="cell light"></div>
           </div>
         </div>
-        <div id="player-2" class="player"></div>
-      </div>
-      <button id="start-match">Start</button>
-    </main>
-    <footer>
-      <div id="rules">
-        <a href="https://es.wikipedia.org/wiki/Damas" target="_blank">Rules</a>
-      </div>
-      <div id="author">Gianfranco Elli, 2021</div>
-      <div id="helpers">
-        <!--This was copied from www.flaticon.com page-->
-        <div>
-          Icons made by
-          <a
-            href="https://www.flaticon.com/authors/pixelmeetup"
-            title="Pixelmeetup"
-            >Pixelmeetup</a
-          >
-          from
-          <a href="https://www.flaticon.com/" title="Flaticon"
-            >www.flaticon.com</a
-          >
+        <div id="player-2" class="player">
+          <img src="./images/man.png" class="player-image" alt="Man picture" />
+          <div>Player 2</div>
+          <div id="remaining-pieces-player-2" class="remaining-pieces">
+            Pieces: 12
+          </div>
         </div>
       </div>
+      <button id="start-match">START</button>
+    </main>
+    <footer>
+      <div id="rules" class="footer-item">
+        <a href="https://es.wikipedia.org/wiki/Damas" target="_blank">Rules</a>
+      </div>
+      <div id="author" class="footer-item">Gianfranco Elli, 2021</div>
     </footer>
   </body>
 </html>
