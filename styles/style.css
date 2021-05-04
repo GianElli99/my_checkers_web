@@ -1,0 +1,29 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+#game {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+#board {
+  max-width: 80%;
+}
+.row {
+  display: flex;
+}
+.cell {
+  height: 8vw;
+  width: 8vw;
+  max-width: 60px;
+  max-height: 60px;
+  border: 1px solid red;
+}
