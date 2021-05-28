@@ -1,3 +1,4 @@
+//ESTADO
 var boardArray = CreateBoardArray();
 boardArray[0][0] = 1;
 boardArray[0][2] = 1;
@@ -13,15 +14,21 @@ boardArray[6][6] = 2;
 boardArray[5][7] = 2;
 boardArray[4][6] = 2;
 
-RenderBoard(boardArray);
+var turn = 2;
+var validOptions = [];
+var selectedPieceCell = '';
+//ESTADO
+RenderBoard(boardArray, turn);
 
-function RenderBoard(boardArray) {
+function RenderBoard(boardArray, turn) {
   var boardHTML = ArrayToBoard(boardArray);
   boardHTML.id = 'board';
+  document.getElementById('board').remove();
   document
     .getElementById('game')
     .insertBefore(boardHTML, document.getElementById('player-2'));
   UpdatePiecesCounter(boardArray);
+  ChangeTurn(turn);
 }
 function CreateBoardArray() {
   var boardArray = new Array(8);
@@ -76,13 +83,30 @@ function CreateCell(rowNumber, colNumber, isRowEven, isColEven) {
   } else {
     divCell.classList.add('light');
   }
+  divCell.addEventListener('click', function (e) {
+    if (selectedPieceCell && selectedPieceCell !== this.id) {
+      MovePieceHere(this);
+    }
+  });
 
   return divCell;
+}
+function MovePieceHere(piece) {
+  console.log('Move piece');
+  var splittedId = piece.id.split('-');
+  var row = parseInt(splittedId[1] - 1);
+  var col = parseInt(splittedId[3] - 1);
+  boardArray[4][4] = null;
+  boardArray[5][3] = 1;
+  RenderBoard(boardArray);
 }
 function CreatePiece(player, number) {
   var piece = document.createElement('div');
   piece.classList.add('piece');
   piece.classList.add('piece-player-' + player);
+  piece.addEventListener('click', function () {
+    RenderOptions(this, player);
+  });
   return piece;
 }
 function UpdatePiecesCounter(boardArray) {
@@ -107,4 +131,33 @@ function UpdatePiecesCounter(boardArray) {
     player1pieces;
   document.getElementById('remaining-pieces-player-2').textContent =
     player2pieces;
+}
+function ChangeTurn() {
+  if (turn === 1) {
+    document.getElementById('player-1-turn').classList.add('not-visible');
+    document.getElementById('player-2-turn').classList.remove('not-visible');
+    turn = 2;
+  } else {
+    document.getElementById('player-2-turn').classList.add('not-visible');
+    document.getElementById('player-1-turn').classList.remove('not-visible');
+    turn = 1;
+  }
+}
+function RenderOptions(piece, PieceOwner) {
+  if (PieceOwner === turn) {
+    console.log('options');
+    selectedPieceCell = piece.parentElement.id;
+    var splittedId = piece.parentElement.id.split('-');
+    var row = parseInt(splittedId[1]);
+    var col = parseInt(splittedId[3]);
+    var upperLeft = 'row-' + (row + 1) + '-col-' + (col - 1);
+    var upperRight = 'row-' + (row + 1) + '-col-' + (col + 1);
+    var bottomLeft = 'row-' + (row - 1) + '-col-' + (col - 1);
+    var bottomRight = 'row-' + (row - 1) + '-col-' + (col + 1);
+
+    validOptions = [upperLeft, upperRight];
+    document.getElementById(upperLeft).classList.add('valid-movement');
+    document.getElementById(upperRight).classList.add('valid-movement');
+  }
+  return;
 }

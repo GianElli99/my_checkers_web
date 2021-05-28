@@ -123,12 +123,16 @@ main {
 .light {
   background-color: rgb(232, 235, 239);
 }
+.valid-movement {
+  background-color: #1abc9c;
+}
 .piece {
   border-radius: 50%;
   width: 85%;
   height: 85%;
   border: 2px solid black;
   box-shadow: 2px 2px 5px grey;
+  cursor: pointer;
 }
 .piece-player-1 {
   background-color: rgb(242, 242, 242);
