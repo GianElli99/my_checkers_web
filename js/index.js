@@ -1,30 +1,43 @@
-var boardArray = new Array(8);
-for (let i = 0; i < boardArray.length; i++) {
-  boardArray[i] = Array.apply(null, Array(8));
+var boardArray = CreateBoardArray();
+var boardHTML = ArrayToBoard(boardArray);
+boardHTML.id = 'board';
+
+document
+  .getElementById('game')
+  .insertBefore(boardHTML, document.getElementById('player-2'));
+
+function CreateBoardArray() {
+  var boardArray = new Array(8);
+  for (let i = 0; i < boardArray.length; i++) {
+    boardArray[i] = Array.apply(null, Array(8));
+  }
+  return boardArray;
 }
+function ArrayToBoard(boardArray) {
+  var board = document.createElement('div');
 
-var boardChild = document.createElement('div');
+  boardArray.forEach(function (row, rowIndex) {
+    var rowRealNumber = boardArray.length - rowIndex;
+    var isRowEven = rowRealNumber % 2 === 0;
 
-boardArray.forEach(function (row, rowIndex) {
-  var rowRealNumber = boardArray.length - rowIndex;
-  var isRowEven = rowRealNumber % 2 === 0;
+    var divRow = CreateRow(rowRealNumber);
+    board.appendChild(divRow);
 
-  var divRow = CreateRow(rowRealNumber);
-  boardChild.appendChild(divRow);
-
-  row.forEach(function (cell, cellIndex) {
-    var colRealNumber = cellIndex + 1;
-    var isColEven = colRealNumber % 2 === 0;
-    var divCell = CreateCell(
-      rowRealNumber,
-      colRealNumber,
-      isRowEven,
-      isColEven
-    );
-    divRow.appendChild(divCell);
+    row.forEach(function (cell, cellIndex) {
+      var colRealNumber = cellIndex + 1;
+      var isColEven = colRealNumber % 2 === 0;
+      var divCell = CreateCell(
+        rowRealNumber,
+        colRealNumber,
+        isRowEven,
+        isColEven
+      );
+      divRow.appendChild(divCell);
+    });
   });
-});
 
+  return board;
+}
 function CreateRow(number) {
   var divRow = document.createElement('div');
   divRow.id = 'row-' + number;
@@ -44,9 +57,6 @@ function CreateCell(rowNumber, colNumber, isRowEven, isColEven) {
 
   return divCell;
 }
-
-document.getElementById('board').appendChild(boardChild);
-console.log(boardChild);
 /*<div id="board">
           <div id="row-8" class="row">
             <div id="row-8-col-a" class="cell light"></div>
