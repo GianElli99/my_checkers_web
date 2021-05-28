@@ -6,7 +6,7 @@ A project that allows you to play checkers, made with:
 
 - [x] HTML
 - [x] CSS
-- [ ] JS
+- [x] JS
 
 ## Online View
 
