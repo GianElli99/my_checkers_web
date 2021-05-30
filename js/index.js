@@ -172,23 +172,54 @@ function RenderOptions(piece, PieceOwner) {
   DeleteOldOptions();
   if (PieceOwner === turn) {
     selectedPieceCell = piece.parentElement.id;
-    var pos = ParseIdToArrayPosition(piece.parentElement.id);
+    var pos = ParseIdToArrayPosition(selectedPieceCell);
     var row = pos[0];
     var col = pos[1];
-    var upperLeft = CreateCellId(row + 2, col);
-    var upperRight = CreateCellId(row + 2, col + 2);
-    var bottomLeft = CreateCellId(row, col);
-    var bottomRight = CreateCellId(row, col + 2);
 
-    validOptions = [upperLeft, upperRight];
-    document.getElementById(upperLeft).classList.add('valid-movement');
-    document.getElementById(upperRight).classList.add('valid-movement');
+    var upperLeft =
+      row + 2 <= 8 && row + 2 >= 1 && col <= 8 && col >= 1
+        ? CreateCellId(row + 2, col)
+        : null;
+    var upperRight =
+      row + 2 <= 8 && row + 2 >= 1 && col + 2 <= 8 && col + 2 >= 1
+        ? CreateCellId(row + 2, col + 2)
+        : null;
+    var bottomLeft =
+      row <= 8 && row >= 1 && col <= 8 && col >= 1
+        ? CreateCellId(row, col)
+        : null;
+    var bottomRight =
+      row <= 8 && row >= 1 && col + 2 <= 8 && col + 2 >= 1
+        ? CreateCellId(row, col + 2)
+        : null;
+
+    if (turn === 1) {
+      if (!HasPiece(upperLeft)) {
+        validOptions.push(upperLeft);
+        document.getElementById(upperLeft)?.classList.add('valid-movement');
+      }
+      if (!HasPiece(upperRight)) {
+        validOptions.push(upperRight);
+        document.getElementById(upperRight)?.classList.add('valid-movement');
+      }
+    } else {
+      if (!HasPiece(bottomLeft)) {
+        validOptions.push(bottomLeft);
+        document.getElementById(bottomLeft)?.classList.add('valid-movement');
+      }
+      if (!HasPiece(bottomRight)) {
+        validOptions.push(bottomRight);
+        document.getElementById(bottomRight)?.classList.add('valid-movement');
+      }
+    }
   }
   return;
 }
 function DeleteOldOptions() {
   validOptions.forEach(function (x, i) {
-    document.getElementById(x).classList.remove('valid-movement');
+    if (x) {
+      document.getElementById(x).classList.remove('valid-movement');
+    }
   });
   validOptions = [];
 }
@@ -200,4 +231,17 @@ function ParseIdToArrayPosition(id) {
 }
 function ParseArrayPositionToId(row, col) {
   return CreateCellId(row + 1, col + 1);
+}
+function HasPiece(id) {
+  if (id === null) {
+    return false;
+  }
+  var pos = ParseIdToArrayPosition(id);
+  var row = pos[0];
+  var col = pos[1];
+  if (boardArray[row][col]) {
+    return true;
+  } else {
+    return false;
+  }
 }
