@@ -69,13 +69,16 @@ function ArrayToBoard(boardArray) {
 }
 function CreateRow(number) {
   var divRow = document.createElement('div');
-  divRow.id = 'row-' + number;
+  divRow.id = CreateRowId(number);
   divRow.className = 'row';
   return divRow;
 }
+function CreateRowId(rowNumber) {
+  return 'row-' + rowNumber;
+}
 function CreateCell(rowNumber, colNumber, isRowEven, isColEven) {
   var divCell = document.createElement('div');
-  divCell.id = 'row-' + rowNumber + '-col-' + colNumber;
+  divCell.id = CreateCellId(rowNumber, colNumber);
   divCell.className = 'cell';
 
   if (isRowEven === isColEven) {
@@ -84,20 +87,42 @@ function CreateCell(rowNumber, colNumber, isRowEven, isColEven) {
     divCell.classList.add('light');
   }
   divCell.addEventListener('click', function (e) {
-    if (selectedPieceCell && selectedPieceCell !== this.id) {
+    if (
+      selectedPieceCell &&
+      selectedPieceCell !== this.id &&
+      IsValidOption(divCell)
+    ) {
       MovePieceHere(this);
     }
   });
 
   return divCell;
 }
-function MovePieceHere(piece) {
-  console.log('Move piece');
-  var splittedId = piece.id.split('-');
-  var row = parseInt(splittedId[1] - 1);
-  var col = parseInt(splittedId[3] - 1);
-  boardArray[4][4] = null;
-  boardArray[5][3] = 1;
+function IsValidOption(cell) {
+  var result = validOptions.find(function (x) {
+    return x === cell.id;
+  });
+  if (result) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function CreateCellId(rowNumber, colNumber) {
+  return 'row-' + rowNumber + '-col-' + colNumber;
+}
+function MovePieceHere(cell) {
+  var initialPos = ParseIdToArrayPosition(selectedPieceCell);
+  var initialRow = initialPos[0];
+  var initialCol = initialPos[1];
+
+  var finalPos = ParseIdToArrayPosition(cell.id);
+  var finalRow = finalPos[0];
+  var finalCol = finalPos[1];
+
+  boardArray[initialRow][initialCol] = null;
+  boardArray[finalRow][finalCol] = turn;
+  selectedPieceCell = '';
   RenderBoard(boardArray);
 }
 function CreatePiece(player, number) {
@@ -144,20 +169,35 @@ function ChangeTurn() {
   }
 }
 function RenderOptions(piece, PieceOwner) {
+  DeleteOldOptions();
   if (PieceOwner === turn) {
-    console.log('options');
     selectedPieceCell = piece.parentElement.id;
-    var splittedId = piece.parentElement.id.split('-');
-    var row = parseInt(splittedId[1]);
-    var col = parseInt(splittedId[3]);
-    var upperLeft = 'row-' + (row + 1) + '-col-' + (col - 1);
-    var upperRight = 'row-' + (row + 1) + '-col-' + (col + 1);
-    var bottomLeft = 'row-' + (row - 1) + '-col-' + (col - 1);
-    var bottomRight = 'row-' + (row - 1) + '-col-' + (col + 1);
+    var pos = ParseIdToArrayPosition(piece.parentElement.id);
+    var row = pos[0];
+    var col = pos[1];
+    var upperLeft = CreateCellId(row + 2, col);
+    var upperRight = CreateCellId(row + 2, col + 2);
+    var bottomLeft = CreateCellId(row, col);
+    var bottomRight = CreateCellId(row, col + 2);
 
     validOptions = [upperLeft, upperRight];
     document.getElementById(upperLeft).classList.add('valid-movement');
     document.getElementById(upperRight).classList.add('valid-movement');
   }
   return;
+}
+function DeleteOldOptions() {
+  validOptions.forEach(function (x, i) {
+    document.getElementById(x).classList.remove('valid-movement');
+  });
+  validOptions = [];
+}
+function ParseIdToArrayPosition(id) {
+  var splittedId = id.split('-');
+  var row = parseInt(splittedId[1]) - 1;
+  var col = parseInt(splittedId[3]) - 1;
+  return [row, col];
+}
+function ParseArrayPositionToId(row, col) {
+  return CreateCellId(row + 1, col + 1);
 }
