@@ -42,15 +42,15 @@ function ArrayToBoard(boardArray) {
   var board = document.createElement('div');
   boardArray.reverse();
   boardArray.forEach(function (row, rowIndex) {
-    var rowRealNumber = boardArray.length - rowIndex;
-    var isRowEven = rowRealNumber % 2 === 0;
+    var rowRealNumber = boardArray.length - rowIndex - 1;
+    var isRowEven = rowRealNumber % 2 === 1;
 
     var divRow = CreateRow(rowRealNumber);
     board.appendChild(divRow);
 
     row.forEach(function (cell, cellIndex) {
-      var colRealNumber = cellIndex + 1;
-      var isColEven = colRealNumber % 2 === 0;
+      var colRealNumber = cellIndex;
+      var isColEven = colRealNumber % 2 === 1;
       var divCell = CreateCell(
         rowRealNumber,
         colRealNumber,
@@ -109,7 +109,7 @@ function IsValidOption(cell) {
   }
 }
 function CreateCellId(rowNumber, colNumber) {
-  return 'row-' + rowNumber + '-col-' + colNumber;
+  return 'row-' + (rowNumber + 1) + '-col-' + (colNumber + 1);
 }
 function MovePieceHere(cell) {
   var initialPos = ParseIdToArrayPosition(selectedPieceCell);
@@ -168,13 +168,53 @@ function ChangeTurn() {
     turn = 1;
   }
 }
+function CellExists(cellId) {
+  var pos = ParseIdToArrayPosition(cellId);
+  var row = pos[0];
+  var col = pos[1];
+  if (row < 8 && row >= 0 && col < 8 && col >= 0) {
+    return true;
+  }
+  return false;
+}
+function AddOption(cellId) {
+  if (CellExists(cellId) && !HasPiece(cellId)) {
+    validOptions.push(cellId);
+  }
+}
+function FindOptions(cellId, isDama) {
+  var pos = ParseIdToArrayPosition(cellId);
+  var row = pos[0];
+  var col = pos[1];
+  var upperLeft = CreateCellId(row + 1, col - 1);
+  var upperRight = CreateCellId(row + 1, col + 1);
+  var bottomLeft = CreateCellId(row - 1, col - 1);
+  var bottomRight = CreateCellId(row - 1, col + 1);
+
+  if (isDama) {
+  } else {
+    if (turn === 1) {
+      AddOption(upperLeft);
+      AddOption(upperRight);
+    } else {
+      AddOption(bottomLeft);
+      AddOption(bottomRight);
+    }
+  }
+  validOptions.forEach(function (x) {
+    document.getElementById(x).classList.add('valid-movement');
+  });
+}
 function RenderOptions(piece, PieceOwner) {
   DeleteOldOptions();
   if (PieceOwner === turn) {
     selectedPieceCell = piece.parentElement.id;
-    var pos = ParseIdToArrayPosition(selectedPieceCell);
+    FindOptions(selectedPieceCell);
+    /*var pos = ParseIdToArrayPosition(selectedPieceCell);
     var row = pos[0];
     var col = pos[1];
+    var rowInBoard = row + 1;
+    var colInBoard = col + 1;
 
     var upperLeft =
       row + 2 <= 8 && row + 2 >= 1 && col <= 8 && col >= 1
@@ -213,7 +253,8 @@ function RenderOptions(piece, PieceOwner) {
       }
     }
   }
-  return;
+  return;*/
+  }
 }
 function DeleteOldOptions() {
   validOptions.forEach(function (x, i) {
@@ -230,13 +271,13 @@ function ParseIdToArrayPosition(id) {
   return [row, col];
 }
 function ParseArrayPositionToId(row, col) {
-  return CreateCellId(row + 1, col + 1);
+  return CreateCellId(row, col);
 }
-function HasPiece(id) {
-  if (id === null) {
+function HasPiece(cellId) {
+  if (cellId === null) {
     return false;
   }
-  var pos = ParseIdToArrayPosition(id);
+  var pos = ParseIdToArrayPosition(cellId);
   var row = pos[0];
   var col = pos[1];
   if (boardArray[row][col]) {
