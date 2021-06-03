@@ -87,6 +87,10 @@ main {
   font-size: 1.3rem;
   font-weight: 500;
 }
+.dama {
+  height: 60%;
+  width: auto;
+}
 .turn {
   padding: 20px;
 }
@@ -127,6 +131,10 @@ main {
   background-color: #1abc9c;
 }
 .piece {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   border-radius: 50%;
   width: 85%;
   height: 85%;

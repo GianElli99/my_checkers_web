@@ -1,6 +1,6 @@
 //ESTADO
 var boardArray = CreateBoardArray();
-boardArray[0][0] = 1;
+boardArray[0][0] = 10;
 boardArray[0][2] = 1;
 boardArray[0][4] = 1;
 boardArray[0][6] = 1;
@@ -9,7 +9,7 @@ boardArray[4][4] = 1;
 
 boardArray[7][1] = 2;
 boardArray[7][3] = 2;
-boardArray[7][5] = 2;
+boardArray[7][5] = 20;
 boardArray[6][6] = 2;
 boardArray[5][7] = 2;
 boardArray[4][6] = 2;
@@ -120,17 +120,26 @@ function MovePieceHere(cell) {
   var finalRow = finalPos[0];
   var finalCol = finalPos[1];
 
+  boardArray[finalRow][finalCol] = boardArray[initialRow][initialCol];
   boardArray[initialRow][initialCol] = null;
-  boardArray[finalRow][finalCol] = turn;
   selectedPieceCell = '';
   RenderBoard(boardArray);
 }
-function CreatePiece(player, number) {
+function CreatePiece(player) {
   var piece = document.createElement('div');
   piece.classList.add('piece');
-  piece.classList.add('piece-player-' + player);
+  var playerNumber = player.toString().substr(0, 1);
+  piece.classList.add('piece-player-' + playerNumber);
+
+  if (player === 10 || player === 20) {
+    var damaIcon = document.createElement('img');
+    damaIcon.src = './images/crowns.png';
+    damaIcon.classList.add('dama');
+    piece.appendChild(damaIcon);
+  }
+
   piece.addEventListener('click', function () {
-    RenderOptions(this, player);
+    RenderOptions(this, parseInt(playerNumber));
   });
   return piece;
 }
@@ -210,50 +219,6 @@ function RenderOptions(piece, PieceOwner) {
   if (PieceOwner === turn) {
     selectedPieceCell = piece.parentElement.id;
     FindOptions(selectedPieceCell);
-    /*var pos = ParseIdToArrayPosition(selectedPieceCell);
-    var row = pos[0];
-    var col = pos[1];
-    var rowInBoard = row + 1;
-    var colInBoard = col + 1;
-
-    var upperLeft =
-      row + 2 <= 8 && row + 2 >= 1 && col <= 8 && col >= 1
-        ? CreateCellId(row + 2, col)
-        : null;
-    var upperRight =
-      row + 2 <= 8 && row + 2 >= 1 && col + 2 <= 8 && col + 2 >= 1
-        ? CreateCellId(row + 2, col + 2)
-        : null;
-    var bottomLeft =
-      row <= 8 && row >= 1 && col <= 8 && col >= 1
-        ? CreateCellId(row, col)
-        : null;
-    var bottomRight =
-      row <= 8 && row >= 1 && col + 2 <= 8 && col + 2 >= 1
-        ? CreateCellId(row, col + 2)
-        : null;
-
-    if (turn === 1) {
-      if (!HasPiece(upperLeft)) {
-        validOptions.push(upperLeft);
-        document.getElementById(upperLeft)?.classList.add('valid-movement');
-      }
-      if (!HasPiece(upperRight)) {
-        validOptions.push(upperRight);
-        document.getElementById(upperRight)?.classList.add('valid-movement');
-      }
-    } else {
-      if (!HasPiece(bottomLeft)) {
-        validOptions.push(bottomLeft);
-        document.getElementById(bottomLeft)?.classList.add('valid-movement');
-      }
-      if (!HasPiece(bottomRight)) {
-        validOptions.push(bottomRight);
-        document.getElementById(bottomRight)?.classList.add('valid-movement');
-      }
-    }
-  }
-  return;*/
   }
 }
 function DeleteOldOptions() {
