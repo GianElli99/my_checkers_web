@@ -130,6 +130,9 @@ main {
 .valid-movement {
   background-color: #1abc9c;
 }
+.valid-movement-eating {
+  background-color: #f4743b;
+}
 .piece {
   display: flex;
   align-items: center;

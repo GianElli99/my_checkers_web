@@ -15,7 +15,8 @@ boardArray[5][7] = 2;
 boardArray[4][6] = 2;
 
 var turn = 2;
-var validOptions = [];
+var validOptionsToMove = [];
+var validOptionsToMoveEating = [];
 var selectedPieceCell = '';
 //ESTADO
 RenderBoard(boardArray, turn);
@@ -99,14 +100,17 @@ function CreateCell(rowNumber, colNumber, isRowEven, isColEven) {
   return divCell;
 }
 function IsValidOption(cell) {
-  var result = validOptions.find(function (x) {
+  var opcionesComer = [];
+  validOptionsToMoveEating.forEach((x) => opcionesComer.push(x[1]));
+  if (!opcionesComer) {
+    opcionesComer = [];
+  }
+  var allOptions = opcionesComer.concat(validOptionsToMove);
+  var result = allOptions.find(function (x) {
     return x === cell.id;
   });
-  if (result) {
-    return true;
-  } else {
-    return false;
-  }
+
+  return result ? true : false;
 }
 function CreateCellId(rowNumber, colNumber) {
   return 'row-' + (rowNumber + 1) + '-col-' + (colNumber + 1);
@@ -119,6 +123,16 @@ function MovePieceHere(cell) {
   var finalPos = ParseIdToArrayPosition(cell.id);
   var finalRow = finalPos[0];
   var finalCol = finalPos[1];
+  var comio = validOptionsToMoveEating.find((x) => x[1] === cell.id);
+  if (comio) {
+    var comioPos = ParseIdToArrayPosition(comio[0]);
+    var comioRow = comioPos[0];
+    var comioCol = comioPos[1];
+
+    boardArray[comioRow][comioCol] = null;
+  }
+  validOptionsToMoveEating = [];
+  validOptionsToMove = [];
 
   boardArray[finalRow][finalCol] = boardArray[initialRow][initialCol];
   boardArray[initialRow][initialCol] = null;
@@ -188,14 +202,27 @@ function CellExists(cellId) {
   }
   return false;
 }
-function AddOption(cellId) {
-  if (CellExists(cellId) && !HasPiece(cellId)) {
-    validOptions.push(cellId);
+function AddEatingOption(cellId, nextRow, nextCol) {
+  var pos = ParseIdToArrayPosition(cellId);
+  var row = pos[0] + nextRow;
+  var col = pos[1] + nextCol;
+  var nextCell = ParseArrayPositionToId(row, col);
+  if (CellExists(nextCell) && !HasPiece(nextCell)) {
+    validOptionsToMoveEating.push([cellId, nextCell]);
+  }
+}
+function AddOption(cellId, nextRow, nextCol) {
+  if (CellExists(cellId)) {
+    if (HasPiece(cellId)) {
+      AddEatingOption(cellId, nextRow, nextCol);
+    } else {
+      validOptionsToMove.push(cellId);
+    }
   }
 }
 function AddOptionRecursive(cellId, nextRow, nextCol) {
   if (CellExists(cellId) && !HasPiece(cellId)) {
-    validOptions.push(cellId);
+    validOptionsToMove.push(cellId);
     var pos = ParseIdToArrayPosition(cellId);
     var row = pos[0] + nextRow;
     var col = pos[1] + nextCol;
@@ -231,15 +258,18 @@ function FindOptions(cellId, isDama) {
     FindOptionsRecursive(cellId);
   } else {
     if (turn === 1) {
-      AddOption(upperLeft);
-      AddOption(upperRight);
+      AddOption(upperLeft, 1, -1);
+      AddOption(upperRight, 1, 1);
     } else {
-      AddOption(bottomLeft);
-      AddOption(bottomRight);
+      AddOption(bottomLeft, -1, -1);
+      AddOption(bottomRight, -1, 1);
     }
   }
-  validOptions.forEach(function (x) {
+  validOptionsToMove.forEach(function (x) {
     document.getElementById(x).classList.add('valid-movement');
+  });
+  validOptionsToMoveEating.forEach(function (x) {
+    document.getElementById(x[1]).classList.add('valid-movement-eating');
   });
 }
 function RenderOptions(piece, PieceOwner) {
@@ -251,12 +281,18 @@ function RenderOptions(piece, PieceOwner) {
   }
 }
 function DeleteOldOptions() {
-  validOptions.forEach(function (x, i) {
+  validOptionsToMove.forEach(function (x, i) {
     if (x) {
       document.getElementById(x).classList.remove('valid-movement');
     }
   });
-  validOptions = [];
+  validOptionsToMoveEating.forEach(function (x, i) {
+    if (x[1]) {
+      document.getElementById(x).classList.remove('valid-movement-eating');
+    }
+  });
+  validOptionsToMoveEating = [];
+  validOptionsToMove = [];
 }
 function ParseIdToArrayPosition(id) {
   var splittedId = id.split('-');
