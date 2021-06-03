@@ -1,10 +1,10 @@
 //ESTADO
 var boardArray = CreateBoardArray();
-boardArray[0][0] = 10;
+boardArray[0][0] = 1;
 boardArray[0][2] = 1;
 boardArray[0][4] = 1;
 boardArray[0][6] = 1;
-boardArray[2][2] = 1;
+boardArray[2][2] = 10;
 boardArray[4][4] = 1;
 
 boardArray[7][1] = 2;
@@ -150,9 +150,11 @@ function UpdatePiecesCounter(boardArray) {
     for (let c = 0; c < boardArray.length; c++) {
       switch (boardArray[r][c]) {
         case 1:
+        case 10:
           player1pieces++;
           break;
         case 2:
+        case 20:
           player2pieces++;
           break;
 
@@ -191,6 +193,31 @@ function AddOption(cellId) {
     validOptions.push(cellId);
   }
 }
+function AddOptionRecursive(cellId, nextRow, nextCol) {
+  if (CellExists(cellId) && !HasPiece(cellId)) {
+    validOptions.push(cellId);
+    var pos = ParseIdToArrayPosition(cellId);
+    var row = pos[0] + nextRow;
+    var col = pos[1] + nextCol;
+    var nextCell = ParseArrayPositionToId(row, col);
+    AddOptionRecursive(nextCell, nextRow, nextCol);
+  }
+  return;
+}
+function FindOptionsRecursive(cellId) {
+  var pos = ParseIdToArrayPosition(cellId);
+  var row = pos[0];
+  var col = pos[1];
+  var upperLeft = CreateCellId(row + 1, col - 1);
+  var upperRight = CreateCellId(row + 1, col + 1);
+  var bottomLeft = CreateCellId(row - 1, col - 1);
+  var bottomRight = CreateCellId(row - 1, col + 1);
+
+  AddOptionRecursive(upperLeft, 1, -1);
+  AddOptionRecursive(upperRight, 1, 1);
+  AddOptionRecursive(bottomLeft, -1, -1);
+  AddOptionRecursive(bottomRight, -1, 1);
+}
 function FindOptions(cellId, isDama) {
   var pos = ParseIdToArrayPosition(cellId);
   var row = pos[0];
@@ -201,6 +228,7 @@ function FindOptions(cellId, isDama) {
   var bottomRight = CreateCellId(row - 1, col + 1);
 
   if (isDama) {
+    FindOptionsRecursive(cellId);
   } else {
     if (turn === 1) {
       AddOption(upperLeft);
@@ -218,7 +246,8 @@ function RenderOptions(piece, PieceOwner) {
   DeleteOldOptions();
   if (PieceOwner === turn) {
     selectedPieceCell = piece.parentElement.id;
-    FindOptions(selectedPieceCell);
+    var isDama = piece.firstElementChild ? true : false;
+    FindOptions(selectedPieceCell, isDama);
   }
 }
 function DeleteOldOptions() {
