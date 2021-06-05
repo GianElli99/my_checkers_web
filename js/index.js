@@ -1,19 +1,5 @@
 //ESTADO
 var boardArray = CreateBoardArray();
-boardArray[0][0] = 1;
-boardArray[0][2] = 1;
-boardArray[0][4] = 1;
-boardArray[0][6] = 1;
-boardArray[2][2] = 10;
-boardArray[4][4] = 1;
-
-boardArray[7][1] = 2;
-boardArray[7][3] = 2;
-boardArray[7][5] = 20;
-boardArray[6][6] = 2;
-boardArray[5][7] = 2;
-boardArray[4][6] = 2;
-
 var turn = 2;
 var validOptionsToMove = [];
 var validOptionsToMoveEating = [];
@@ -210,6 +196,18 @@ function GetEatenPieceId(finalPosId) {
   }
   return undefined;
 }
+function ConvertToDamaIfNecessary(row, col) {
+  var pieceOwner = boardArray[row][col];
+  if (row === 0 && pieceOwner === 2) {
+    boardArray[row][col] = 20;
+    return true;
+  }
+  if (row === 7 && pieceOwner === 1) {
+    boardArray[row][col] = 10;
+    return true;
+  }
+  return false;
+}
 function MovePieceHere(cell) {
   var initialPos = ParseIdToArrayPosition(cellIdOfSelectedPiece);
   var initialRow = initialPos[0];
@@ -231,7 +229,10 @@ function MovePieceHere(cell) {
   boardArray[finalRow][finalCol] = boardArray[initialRow][initialCol];
   boardArray[initialRow][initialCol] = null;
 
-  var isTurnFinished = !isEatingMov;
+  var willBeDama = ConvertToDamaIfNecessary(finalRow, finalCol);
+
+  var isTurnFinished = !isEatingMov || willBeDama;
+
   if (isEatingMov) {
     cellIdOfSelectedPiece = cell.id;
   } else {
@@ -240,6 +241,7 @@ function MovePieceHere(cell) {
   DeleteOldOptions();
   RenderState(boardArray, isTurnFinished);
 }
+
 function CellExists(cellId) {
   var pos = ParseIdToArrayPosition(cellId);
   var row = pos[0];
