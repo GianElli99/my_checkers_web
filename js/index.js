@@ -7,7 +7,7 @@ var cellIdOfSelectedPiece = '';
 var canSelectOtherPieces = true;
 //ESTADO
 
-RenderState(boardArray, turn);
+RenderState(boardArray, true);
 
 function CreateBoardArray() {
   var boardArray = new Array(8);
@@ -290,6 +290,9 @@ function AddOptionRecursive(cellId, nextRow, nextCol) {
     var nextCell = ParseArrayPositionToId(row, col);
     AddOptionRecursive(nextCell, nextRow, nextCol);
   }
+  if (CellExists(cellId) && HasPiece(cellId)) {
+    AddEatingOption(cellId, nextRow, nextCol);
+  }
   return;
 }
 function FindOptionsRecursive(cellId) {
@@ -350,16 +353,19 @@ function RenderEatingOptions(piece, PieceOwner) {
   var upperRight = CreateCellIdFromArrayPos(row + 1, col + 1);
   var bottomLeft = CreateCellIdFromArrayPos(row - 1, col - 1);
   var bottomRight = CreateCellIdFromArrayPos(row - 1, col + 1);
-  if (turn === 1) {
-    AddEatingOption(upperLeft, 1, -1);
-    AddEatingOption(upperRight, 1, 1);
+  if (piece.firstElementChild) {
+    //isDama
+    FindOptionsRecursive(piece.parentElement.id);
   } else {
-    AddEatingOption(bottomLeft, -1, -1);
-    AddEatingOption(bottomRight, -1, 1);
+    if (turn === 1) {
+      AddEatingOption(upperLeft, 1, -1);
+      AddEatingOption(upperRight, 1, 1);
+    } else {
+      AddEatingOption(bottomLeft, -1, -1);
+      AddEatingOption(bottomRight, -1, 1);
+    }
   }
-  validOptionsToMove.forEach(function (x) {
-    document.getElementById(x).classList.add('valid-movement');
-  });
+  validOptionsToMove = [];
   validOptionsToMoveEating.forEach(function (x) {
     document.getElementById(x[1]).classList.add('valid-movement-eating');
   });
@@ -436,5 +442,6 @@ document.getElementById('start-match').onclick = function () {
   boardArray[7][5] = 2;
   boardArray[7][7] = 2;
 
+  turn = 2;
   RenderState(boardArray, true);
 };
