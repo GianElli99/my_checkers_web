@@ -157,6 +157,11 @@ function CreatePiece(player) {
   }
   piece.addEventListener('click', function () {
     if (canSelectOtherPieces) {
+      var selectedPiece = document.getElementById(
+        cellIdOfSelectedPiece
+      )?.firstElementChild;
+      selectedPiece?.classList.remove('selected-piece');
+      this.classList.add('selected-piece');
       RenderAllOptions(this, parseInt(playerNumber));
     }
   });
@@ -265,8 +270,8 @@ function AddEatingOption(cellId, nextRow, nextCol) {
   }
 }
 function HasDifferentOwner(cell1, cell2) {
-  var owner1 = document.getElementById(cell1).firstElementChild?.className;
-  var owner2 = document.getElementById(cell2).firstElementChild?.className;
+  var owner1 = document.getElementById(cell1).firstElementChild?.classList[1];
+  var owner2 = document.getElementById(cell2).firstElementChild?.classList[1];
   if (owner1 !== owner2 && owner2 !== undefined) {
     return true;
   }
