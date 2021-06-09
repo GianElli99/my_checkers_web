@@ -156,12 +156,11 @@ function CreatePiece(player) {
     piece.appendChild(dama);
   }
   piece.addEventListener('click', function () {
+    // var selectedPiece;
     if (canSelectOtherPieces) {
-      var selectedPiece = document.getElementById(
-        cellIdOfSelectedPiece
-      )?.firstElementChild;
-      selectedPiece?.classList.remove('selected-piece');
-      this.classList.add('selected-piece');
+      //   selectedPiece = document.getElementById(
+      //     cellIdOfSelectedPiece
+      //   )?.firstElementChild;
       RenderAllOptions(this, parseInt(playerNumber));
     }
   });
@@ -343,14 +342,24 @@ function FindOptions(cellId, isDama) {
 }
 function RenderAllOptions(piece, PieceOwner) {
   DeleteOldOptions();
+  document
+    .getElementById(cellIdOfSelectedPiece)
+    ?.firstElementChild.classList.remove('selected-piece');
   if (PieceOwner === turn) {
     cellIdOfSelectedPiece = piece.parentElement.id;
+    piece.classList.add('selected-piece');
+
     var isDama = piece.firstElementChild ? true : false;
     FindOptions(cellIdOfSelectedPiece, isDama);
   }
 }
 function RenderEatingOptions(piece, PieceOwner) {
   DeleteOldOptions();
+  document
+    .getElementById(cellIdOfSelectedPiece)
+    ?.firstElementChild.classList.remove('selected-piece');
+  piece.classList.add('selected-piece');
+
   var pos = ParseIdToArrayPosition(piece.parentElement.id);
   var row = pos[0];
   var col = pos[1];
