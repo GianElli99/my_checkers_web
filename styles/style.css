@@ -175,7 +175,7 @@ footer {
 
 @media (max-width: 930px) {
   #game {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
   .player {
     flex-direction: row;
