@@ -7,6 +7,7 @@ var cellIdOfSelectedPiece = '';
 var canSelectOtherPieces = true;
 //ESTADO
 
+document.getElementById('start-match').addEventListener('click', StartMatch);
 RenderState(boardArray, true);
 
 function CreateBoardArray() {
@@ -156,11 +157,7 @@ function CreatePiece(player) {
     piece.appendChild(dama);
   }
   piece.addEventListener('click', function () {
-    // var selectedPiece;
     if (canSelectOtherPieces) {
-      //   selectedPiece = document.getElementById(
-      //     cellIdOfSelectedPiece
-      //   )?.firstElementChild;
       RenderAllOptions(this, parseInt(playerNumber));
     }
   });
@@ -245,7 +242,6 @@ function MovePieceHere(cell) {
   DeleteOldOptions();
   RenderState(boardArray, isTurnFinished);
 }
-
 function CellExists(cellId) {
   var pos = ParseIdToArrayPosition(cellId);
   var row = pos[0];
@@ -286,8 +282,10 @@ function AddOption(cellId, nextRow, nextCol) {
   }
 }
 function AddOptionRecursive(cellId, nextRow, nextCol) {
+  // TODO: Change parameters name to rowJump or sth like that
   if (CellExists(cellId) && !HasPiece(cellId)) {
     validOptionsToMove.push(cellId);
+
     var pos = ParseIdToArrayPosition(cellId);
     var row = pos[0] + nextRow;
     var col = pos[1] + nextCol;
@@ -303,42 +301,36 @@ function FindOptionsRecursive(cellId) {
   var pos = ParseIdToArrayPosition(cellId);
   var row = pos[0];
   var col = pos[1];
-  var upperLeft = CreateCellIdFromArrayPos(row + 1, col - 1);
-  var upperRight = CreateCellIdFromArrayPos(row + 1, col + 1);
-  var bottomLeft = CreateCellIdFromArrayPos(row - 1, col - 1);
-  var bottomRight = CreateCellIdFromArrayPos(row - 1, col + 1);
+  var upperLeftCell = CreateCellIdFromArrayPos(row + 1, col - 1);
+  var upperRightCell = CreateCellIdFromArrayPos(row + 1, col + 1);
+  var bottomLeftCell = CreateCellIdFromArrayPos(row - 1, col - 1);
+  var bottomRightCell = CreateCellIdFromArrayPos(row - 1, col + 1);
 
-  AddOptionRecursive(upperLeft, 1, -1);
-  AddOptionRecursive(upperRight, 1, 1);
-  AddOptionRecursive(bottomLeft, -1, -1);
-  AddOptionRecursive(bottomRight, -1, 1);
+  AddOptionRecursive(upperLeftCell, 1, -1);
+  AddOptionRecursive(upperRightCell, 1, 1);
+  AddOptionRecursive(bottomLeftCell, -1, -1);
+  AddOptionRecursive(bottomRightCell, -1, 1);
 }
 function FindOptions(cellId, isDama) {
   var pos = ParseIdToArrayPosition(cellId);
   var row = pos[0];
   var col = pos[1];
-  var upperLeft = CreateCellIdFromArrayPos(row + 1, col - 1);
-  var upperRight = CreateCellIdFromArrayPos(row + 1, col + 1);
-  var bottomLeft = CreateCellIdFromArrayPos(row - 1, col - 1);
-  var bottomRight = CreateCellIdFromArrayPos(row - 1, col + 1);
+  var upperLeftCell = CreateCellIdFromArrayPos(row + 1, col - 1);
+  var upperRightCell = CreateCellIdFromArrayPos(row + 1, col + 1);
+  var bottomLeftCell = CreateCellIdFromArrayPos(row - 1, col - 1);
+  var bottomRightCell = CreateCellIdFromArrayPos(row - 1, col + 1);
 
   if (isDama) {
     FindOptionsRecursive(cellId);
   } else {
     if (turn === 1) {
-      AddOption(upperLeft, 1, -1);
-      AddOption(upperRight, 1, 1);
+      AddOption(upperLeftCell, 1, -1);
+      AddOption(upperRightCell, 1, 1);
     } else {
-      AddOption(bottomLeft, -1, -1);
-      AddOption(bottomRight, -1, 1);
+      AddOption(bottomLeftCell, -1, -1);
+      AddOption(bottomRightCell, -1, 1);
     }
   }
-  validOptionsToMove.forEach(function (x) {
-    document.getElementById(x).classList.add('valid-movement');
-  });
-  validOptionsToMoveEating.forEach(function (x) {
-    document.getElementById(x[1]).classList.add('valid-movement-eating');
-  });
 }
 function RenderAllOptions(piece, PieceOwner) {
   DeleteOldOptions();
@@ -351,32 +343,38 @@ function RenderAllOptions(piece, PieceOwner) {
 
     var isDama = piece.firstElementChild ? true : false;
     FindOptions(cellIdOfSelectedPiece, isDama);
+    validOptionsToMove.forEach(function (x) {
+      document.getElementById(x).classList.add('valid-movement');
+    });
+    validOptionsToMoveEating.forEach(function (x) {
+      document.getElementById(x[1]).classList.add('valid-movement-eating');
+    });
   }
 }
 function RenderEatingOptions(piece, PieceOwner) {
   DeleteOldOptions();
   document
     .getElementById(cellIdOfSelectedPiece)
-    ?.firstElementChild.classList.remove('selected-piece');
+    ?.firstElementChild.classList.remove('selected-piece'); // TODO: esto ponerlo en otro lugar
   piece.classList.add('selected-piece');
 
   var pos = ParseIdToArrayPosition(piece.parentElement.id);
   var row = pos[0];
   var col = pos[1];
-  var upperLeft = CreateCellIdFromArrayPos(row + 1, col - 1);
-  var upperRight = CreateCellIdFromArrayPos(row + 1, col + 1);
-  var bottomLeft = CreateCellIdFromArrayPos(row - 1, col - 1);
-  var bottomRight = CreateCellIdFromArrayPos(row - 1, col + 1);
+  var upperLeftCell = CreateCellIdFromArrayPos(row + 1, col - 1);
+  var upperRightCell = CreateCellIdFromArrayPos(row + 1, col + 1);
+  var bottomLeftCell = CreateCellIdFromArrayPos(row - 1, col - 1);
+  var bottomRightCell = CreateCellIdFromArrayPos(row - 1, col + 1);
   if (piece.firstElementChild) {
     //isDama
     FindOptionsRecursive(piece.parentElement.id);
   } else {
     if (turn === 1) {
-      AddEatingOption(upperLeft, 1, -1);
-      AddEatingOption(upperRight, 1, 1);
+      AddEatingOption(upperLeftCell, 1, -1);
+      AddEatingOption(upperRightCell, 1, 1);
     } else {
-      AddEatingOption(bottomLeft, -1, -1);
-      AddEatingOption(bottomRight, -1, 1);
+      AddEatingOption(bottomLeftCell, -1, -1);
+      AddEatingOption(bottomRightCell, -1, 1);
     }
   }
   validOptionsToMove = [];
@@ -423,9 +421,9 @@ function HasPiece(cellId) {
     return false;
   }
 }
-
-document.getElementById('start-match').onclick = function () {
+function StartMatch() {
   boardArray = CreateBoardArray();
+
   boardArray[0][0] = 1;
   boardArray[0][2] = 1;
   boardArray[0][4] = 1;
@@ -458,4 +456,4 @@ document.getElementById('start-match').onclick = function () {
 
   turn = 2;
   RenderState(boardArray, true);
-};
+}
