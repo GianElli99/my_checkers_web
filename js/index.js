@@ -3,8 +3,10 @@ var boardArray = CreateBoardArray();
 var turn = 2;
 var validOptionsToMove = [];
 var validOptionsToMoveEating = [];
+var validPiecesToMove = [];
 var cellIdOfSelectedPiece = '';
 var canSelectOtherPieces = true;
+var hasEatingObligation = false;
 //ESTADO
 
 document.getElementById('start-match').addEventListener('click', StartMatch);
@@ -25,6 +27,7 @@ function RenderState(boardArray, isTurnFinished) {
   if (isTurnFinished) {
     canSelectOtherPieces = true;
     ChangeTurn();
+    CheckObligationToEat();
   } else {
     canSelectOtherPieces = false;
     var selectedPiece = document.getElementById(
@@ -157,11 +160,34 @@ function CreatePiece(player) {
     piece.appendChild(dama);
   }
   piece.addEventListener('click', function () {
+    if (hasEatingObligation) {
+      RenderObligatedOptions(this.parentElement.id);
+      return;
+    }
+
     if (canSelectOtherPieces) {
       RenderAllOptions(this, parseInt(playerNumber));
     }
   });
   return piece;
+}
+function RenderObligatedOptions(cellId) {
+  validPiecesToMove.forEach(function (x) {
+    document.getElementById(x[2]).classList.remove('valid-movement-eating');
+  });
+
+  var mustEat =
+    validPiecesToMove.findIndex(function (x) {
+      return x[0] === cellId;
+    }) !== -1;
+  if (mustEat) {
+    cellIdOfSelectedPiece = cellId; //TODO: agregar el cambio en la ui para que se vea seleccionado
+    validPiecesToMove.forEach(function (x) {
+      if (cellId == x[0]) {
+        document.getElementById(x[2]).classList.add('valid-movement-eating');
+      }
+    });
+  }
 }
 function CreateDama() {
   var dama = document.createElement('img');
@@ -175,6 +201,10 @@ function IsValidOption(cell) {
     return eatingOptionDestinations.push(x[1]);
   });
   var allOptions = validOptionsToMove.concat(eatingOptionDestinations);
+
+  validPiecesToMove.forEach(function (x) {
+    allOptions.push(x[2]);
+  });
   var result = allOptions.find(function (x) {
     return x === cell.id;
   });
@@ -182,14 +212,22 @@ function IsValidOption(cell) {
   return result ? true : false;
 }
 function isEatingMovement(cell) {
-  return validOptionsToMoveEating.find(function (x) {
+  var allOptions = validOptionsToMoveEating.slice() || [];
+  validPiecesToMove.forEach(function (x) {
+    allOptions.push([x[1], x[2]]);
+  });
+  return allOptions.find(function (x) {
     return x[1] === cell.id;
   })
     ? true
     : false;
 }
 function GetEatenPieceId(finalPosId) {
-  var option = validOptionsToMoveEating.find(function (x) {
+  var allOptions = validOptionsToMoveEating.slice() || [];
+  validPiecesToMove.forEach(function (x) {
+    allOptions.push([x[1], x[2]]);
+  });
+  var option = allOptions.find(function (x) {
     return x[1] === finalPosId;
   });
   if (option) {
@@ -262,6 +300,10 @@ function AddEatingOption(cellId, nextRow, nextCol) {
     HasDifferentOwner(cellIdOfSelectedPiece, cellId)
   ) {
     validOptionsToMoveEating.push([cellId, nextCell]);
+
+    if (hasEatingObligation) {
+      validPiecesToMove.push([cellIdOfSelectedPiece, cellId, nextCell]);
+    }
   }
 }
 function HasDifferentOwner(cell1, cell2) {
@@ -456,4 +498,29 @@ function StartMatch() {
 
   turn = 2;
   RenderState(boardArray, true);
+}
+function CheckObligationToEat() {
+  validPiecesToMove = [];
+  hasEatingObligation = true;
+  for (let row = 0; row < boardArray.length; row++) {
+    for (let col = 0; col < boardArray[row].length; col++) {
+      var cellValue = boardArray[row][col];
+
+      if (cellValue && cellValue.toString().substr(0, 1) === turn.toString()) {
+        cellIdOfSelectedPiece = CreateCellIdFromArrayPos(row, col);
+
+        FindOptions(
+          cellIdOfSelectedPiece,
+          cellValue === 10 || cellValue === 20
+        ); //TODO: hacer un metodo isDama();
+      }
+    }
+  }
+  cellIdOfSelectedPiece = '';
+  validOptionsToMove = [];
+  validOptionsToMoveEating = [];
+
+  if (validPiecesToMove.length === 0) {
+    hasEatingObligation = false;
+  }
 }
