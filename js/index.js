@@ -160,6 +160,10 @@ function CreatePiece(player) {
     piece.appendChild(dama);
   }
   piece.addEventListener('click', function () {
+    //TODO: aca iria el metodo para cambiar seleccion
+    document
+      .getElementById(cellIdOfSelectedPiece)
+      ?.firstElementChild.classList.remove('selected-piece');
     if (hasEatingObligation) {
       RenderObligatedOptions(this.parentElement.id);
       return;
@@ -181,7 +185,13 @@ function RenderObligatedOptions(cellId) {
       return x[0] === cellId;
     }) !== -1;
   if (mustEat) {
-    cellIdOfSelectedPiece = cellId; //TODO: agregar el cambio en la ui para que se vea seleccionado
+    document
+      .getElementById(cellIdOfSelectedPiece)
+      ?.firstElementChild.classList.remove('selected-piece');
+    cellIdOfSelectedPiece = cellId;
+    document
+      .getElementById(cellIdOfSelectedPiece)
+      .firstElementChild.classList.add('selected-piece');
     validPiecesToMove.forEach(function (x) {
       if (cellId == x[0]) {
         document.getElementById(x[2]).classList.add('valid-movement-eating');
@@ -376,9 +386,6 @@ function FindOptions(cellId, isDama) {
 }
 function RenderAllOptions(piece, PieceOwner) {
   DeleteOldOptions();
-  document
-    .getElementById(cellIdOfSelectedPiece)
-    ?.firstElementChild.classList.remove('selected-piece');
   if (PieceOwner === turn) {
     cellIdOfSelectedPiece = piece.parentElement.id;
     piece.classList.add('selected-piece');
