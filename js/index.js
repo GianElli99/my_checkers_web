@@ -1,12 +1,15 @@
 //ESTADO
 var boardArray = CreateBoardArray();
 var turn = 2;
+var player1pieces = 12;
+var player2pieces = 12;
 var validOptionsToMove = [];
 var validOptionsToMoveEating = [];
 var validPiecesToMove = [];
 var cellIdOfSelectedPiece = '';
 var canSelectOtherPieces = true;
 var hasEatingObligation = false;
+var isGameInProgress = false;
 //ESTADO
 
 document.getElementById('start-match').addEventListener('click', StartMatch);
@@ -24,6 +27,11 @@ function RenderState(boardArray, isTurnFinished) {
   var boardHTML = BoardArrayToBoardHTML(boardArray);
   RenderBoard(boardHTML);
   UpdatePiecesCounter(boardArray);
+  if ((player1pieces === 0 || player2pieces === 0) && isGameInProgress) {
+    isGameInProgress = false;
+    ShowWinner();
+    return;
+  }
   if (isTurnFinished) {
     canSelectOtherPieces = true;
     ChangeTurn();
@@ -73,8 +81,8 @@ function RenderBoard(newBoard) {
     .insertBefore(newBoard, document.getElementById('player-2'));
 }
 function UpdatePiecesCounter(boardArray) {
-  var player1pieces = 0;
-  var player2pieces = 0;
+  player1pieces = 0;
+  player2pieces = 0;
   for (let r = 0; r < boardArray.length; r++) {
     for (let c = 0; c < boardArray.length; c++) {
       switch (boardArray[r][c]) {
@@ -492,6 +500,7 @@ function StartMatch() {
   boardArray[7][7] = 2;
 
   turn = 2;
+  isGameInProgress = true;
   RenderState(boardArray, true);
 }
 function CheckObligationToEat() {
@@ -537,4 +546,8 @@ function UnHighlightPiece(cellId) {
   document
     .getElementById(cellId)
     ?.firstElementChild?.classList.remove('selected-piece');
+}
+function ShowWinner() {
+  var winner = player1pieces === 0 ? 'Player 2' : 'Player 1';
+  window.alert('The winner is: ' + winner);
 }
