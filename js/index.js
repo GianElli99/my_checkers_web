@@ -30,6 +30,7 @@ function RenderState(boardArray, isTurnFinished) {
     CheckObligationToEat();
   } else {
     canSelectOtherPieces = false;
+
     var selectedPiece = document.getElementById(
       cellIdOfSelectedPiece
     )?.firstElementChild;
@@ -160,10 +161,8 @@ function CreatePiece(player) {
     piece.appendChild(dama);
   }
   piece.addEventListener('click', function () {
-    //TODO: aca iria el metodo para cambiar seleccion
-    document
-      .getElementById(cellIdOfSelectedPiece)
-      ?.firstElementChild.classList.remove('selected-piece');
+    UnHighlightPiece(cellIdOfSelectedPiece);
+
     if (hasEatingObligation) {
       RenderObligatedOptions(this.parentElement.id);
       return;
@@ -185,13 +184,8 @@ function RenderObligatedOptions(cellId) {
       return x[0] === cellId;
     }) !== -1;
   if (mustEat) {
-    document
-      .getElementById(cellIdOfSelectedPiece)
-      ?.firstElementChild.classList.remove('selected-piece');
     cellIdOfSelectedPiece = cellId;
-    document
-      .getElementById(cellIdOfSelectedPiece)
-      .firstElementChild.classList.add('selected-piece');
+    HighlightPiece(cellIdOfSelectedPiece);
     validPiecesToMove.forEach(function (x) {
       if (cellId == x[0]) {
         document.getElementById(x[2]).classList.add('valid-movement-eating');
@@ -299,11 +293,11 @@ function CellExists(cellId) {
   }
   return false;
 }
-function AddEatingOption(cellId, nextRow, nextCol) {
-  var pos = ParseIdToArrayPosition(cellId);
-  var row = pos[0] + nextRow;
-  var col = pos[1] + nextCol;
-  var nextCell = ParseArrayPositionToId(row, col);
+function AddEatingOption(cellId, stepToNextRow, stepToNextCol) {
+  var cellPos = ParseIdToArrayPosition(cellId);
+  var nextRow = cellPos[0] + stepToNextRow;
+  var nextCol = cellPos[1] + stepToNextCol;
+  var nextCell = ParseArrayPositionToId(nextRow, nextCol);
   if (
     CellExists(nextCell) &&
     !HasPiece(nextCell) &&
@@ -333,19 +327,18 @@ function AddOption(cellId, nextRow, nextCol) {
     }
   }
 }
-function AddOptionRecursive(cellId, nextRow, nextCol) {
-  // TODO: Change parameters name to rowJump or sth like that
+function AddOptionRecursive(cellId, stepToNextRow, stepToNexCol) {
   if (CellExists(cellId) && !HasPiece(cellId)) {
     validOptionsToMove.push(cellId);
 
-    var pos = ParseIdToArrayPosition(cellId);
-    var row = pos[0] + nextRow;
-    var col = pos[1] + nextCol;
-    var nextCell = ParseArrayPositionToId(row, col);
-    AddOptionRecursive(nextCell, nextRow, nextCol);
+    var cellPos = ParseIdToArrayPosition(cellId);
+    var nextRow = cellPos[0] + stepToNextRow;
+    var nextCol = cellPos[1] + stepToNexCol;
+    var nextCell = ParseArrayPositionToId(nextRow, nextCol);
+    AddOptionRecursive(nextCell, stepToNextRow, stepToNexCol);
   }
   if (CellExists(cellId) && HasPiece(cellId)) {
-    AddEatingOption(cellId, nextRow, nextCol);
+    AddEatingOption(cellId, stepToNextRow, stepToNexCol);
   }
   return;
 }
@@ -388,10 +381,9 @@ function RenderAllOptions(piece, PieceOwner) {
   DeleteOldOptions();
   if (PieceOwner === turn) {
     cellIdOfSelectedPiece = piece.parentElement.id;
-    piece.classList.add('selected-piece');
+    HighlightPiece(cellIdOfSelectedPiece);
 
-    var isDama = piece.firstElementChild ? true : false;
-    FindOptions(cellIdOfSelectedPiece, isDama);
+    FindOptions(cellIdOfSelectedPiece, isDamaFromPiece(piece));
     validOptionsToMove.forEach(function (x) {
       document.getElementById(x).classList.add('valid-movement');
     });
@@ -402,10 +394,7 @@ function RenderAllOptions(piece, PieceOwner) {
 }
 function RenderEatingOptions(piece, PieceOwner) {
   DeleteOldOptions();
-  document
-    .getElementById(cellIdOfSelectedPiece)
-    ?.firstElementChild.classList.remove('selected-piece'); // TODO: esto ponerlo en otro lugar
-  piece.classList.add('selected-piece');
+  HighlightPiece(cellIdOfSelectedPiece);
 
   var pos = ParseIdToArrayPosition(piece.parentElement.id);
   var row = pos[0];
@@ -414,8 +403,7 @@ function RenderEatingOptions(piece, PieceOwner) {
   var upperRightCell = CreateCellIdFromArrayPos(row + 1, col + 1);
   var bottomLeftCell = CreateCellIdFromArrayPos(row - 1, col - 1);
   var bottomRightCell = CreateCellIdFromArrayPos(row - 1, col + 1);
-  if (piece.firstElementChild) {
-    //isDama
+  if (isDamaFromPiece(piece)) {
     FindOptionsRecursive(piece.parentElement.id);
   } else {
     if (turn === 1) {
@@ -516,10 +504,7 @@ function CheckObligationToEat() {
       if (cellValue && cellValue.toString().substr(0, 1) === turn.toString()) {
         cellIdOfSelectedPiece = CreateCellIdFromArrayPos(row, col);
 
-        FindOptions(
-          cellIdOfSelectedPiece,
-          cellValue === 10 || cellValue === 20
-        ); //TODO: hacer un metodo isDama();
+        FindOptions(cellIdOfSelectedPiece, isDamaFromArrayPos(row, col));
       }
     }
   }
@@ -530,4 +515,26 @@ function CheckObligationToEat() {
   if (validPiecesToMove.length === 0) {
     hasEatingObligation = false;
   }
+}
+function isDamaFromPiece(piece) {
+  return piece.firstElementChild ? true : false;
+}
+function isDamaFromArrayPos(row, col) {
+  if (
+    boardArray[row][col] &&
+    (boardArray[row][col] === 10 || boardArray[row][col] === 20)
+  ) {
+    return true;
+  }
+  return false;
+}
+function HighlightPiece(cellId) {
+  document
+    .getElementById(cellId)
+    ?.firstElementChild?.classList.add('selected-piece');
+}
+function UnHighlightPiece(cellId) {
+  document
+    .getElementById(cellId)
+    ?.firstElementChild?.classList.remove('selected-piece');
 }
