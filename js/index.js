@@ -284,11 +284,23 @@ function MovePieceHere(cell) {
 
   var isTurnFinished = !isEatingMov || willBeDama;
 
+  var data = {
+    type: 'piece-movement',
+    payload: {
+      player: 'Player ' + turn.toString(),
+      from: cellIdOfSelectedPiece,
+      to: cell.id,
+    },
+  };
+  SendDataToServer('https://reqres.in/api/login', data);
+  console.log(data);
+
   if (isEatingMov) {
     cellIdOfSelectedPiece = cell.id;
   } else {
     cellIdOfSelectedPiece = '';
   }
+
   DeleteOldOptions();
   RenderState(boardArray, isTurnFinished);
 }
@@ -550,4 +562,23 @@ function UnHighlightPiece(cellId) {
 function ShowWinner() {
   var winner = player1pieces === 0 ? 'Player 2' : 'Player 1';
   window.alert('The winner is: ' + winner);
+}
+
+function SendDataToServer(url, data) {
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (jsonResponse) {
+      console.log(jsonResponse);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
