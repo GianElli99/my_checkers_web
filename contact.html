@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="./styles/normalize.css" />
+    <link rel="stylesheet" href="./styles/common.css" />
+    <link rel="stylesheet" href="./styles/contact.css" />
+
+    <script src="./js/contact.js" defer></script>
+
+    <title>Checkers - Contact Me</title>
+  </head>
+  <body>
+    <header>
+      <h1>Checkers Online - Contact Me</h1>
+      <ul id="access">
+        <li><a id="contact" href="./index.html">Game</a></li>
+        <li><a id="sign-in" href="#">Sign In</a></li>
+        <li><a id="sign-up" href="#">Sign Up</a></li>
+      </ul>
+    </header>
+    <main>
+      <form id="contact-form">
+        <input
+          id="nombre"
+          class="form-input"
+          name="nombre"
+          type="text"
+          placeholder="Nombre completo"
+          autocomplete="off"
+        />
+        <input
+          id="email"
+          class="form-input"
+          name="email"
+          type="text"
+          placeholder="Correo"
+          autocomplete="off"
+        />
+        <textarea
+          id="comentario"
+          class="form-input"
+          name="comentario"
+          placeholder="Comentario"
+          autocomplete="off"
+        ></textarea>
+        <button id="submit-button" type="submit">Enviar</button>
+      </form>
+    </main>
+    <footer>
+      <div id="rules" class="footer-item">
+        <a href="https://es.wikipedia.org/wiki/Damas" target="_blank">Rules</a>
+      </div>
+      <div id="author" class="footer-item">Gianfranco Elli, 2021</div>
+    </footer>
+  </body>
+</html>

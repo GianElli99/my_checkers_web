@@ -11,7 +11,7 @@ var canSelectOtherPieces = true;
 var hasEatingObligation = false;
 var isGameInProgress = false;
 //ESTADO
-
+var serverUrl = 'https://reqres.in/api/login';
 document.getElementById('start-match').addEventListener('click', StartMatch);
 RenderState(boardArray, true);
 
@@ -292,7 +292,7 @@ function MovePieceHere(cell) {
       to: cell.id,
     },
   };
-  SendDataToServer('https://reqres.in/api/login', data);
+  SendDataToServer(serverUrl, data);
   console.log(data);
 
   if (isEatingMov) {
