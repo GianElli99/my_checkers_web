@@ -292,8 +292,8 @@ function MovePieceHere(cell) {
       to: cell.id,
     },
   };
-  SendDataToServer(serverUrl, data);
-  console.log(data);
+  // SendDataToServer(serverUrl, data);
+  // console.log(data);
 
   if (isEatingMov) {
     cellIdOfSelectedPiece = cell.id;
