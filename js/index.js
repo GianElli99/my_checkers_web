@@ -12,7 +12,9 @@ var hasEatingObligation = false;
 var isGameInProgress = false;
 //ESTADO
 var serverUrl = 'https://reqres.in/api/login';
-document.getElementById('start-match').addEventListener('click', StartMatch);
+document.getElementById('start-match').addEventListener('click', StartNewMatch);
+document.getElementById('save-match').addEventListener('click', SaveGame);
+document.getElementById('load-match').addEventListener('click', LoadGame);
 RenderState(boardArray, true);
 
 function CreateBoardArray() {
@@ -478,7 +480,7 @@ function HasPiece(cellId) {
     return false;
   }
 }
-function StartMatch() {
+function StartNewMatch() {
   boardArray = CreateBoardArray();
 
   boardArray[0][0] = 1;
@@ -512,6 +514,11 @@ function StartMatch() {
   boardArray[7][7] = 2;
 
   turn = 2;
+  isGameInProgress = true;
+  RenderState(boardArray, true);
+}
+
+function ResumeGame() {
   isGameInProgress = true;
   RenderState(boardArray, true);
 }
@@ -581,4 +588,35 @@ function SendDataToServer(url, data) {
     .catch(function (error) {
       console.log(error);
     });
+}
+
+function SaveGame() {
+  if (!isGameInProgress) {
+    alert('You cannot save an ended or not started game');
+    return;
+  }
+  try {
+    var dataToSave = {
+      turn: turn,
+      boardArray: boardArray,
+    };
+    localStorage.setItem('gameState', JSON.stringify(dataToSave));
+  } catch (error) {
+    console.log('An error occurred');
+  }
+}
+function LoadGame() {
+  try {
+    var savedData = JSON.parse(localStorage.getItem('gameState'));
+
+    if (savedData.turn === 1) {
+      turn = 2;
+    } else {
+      turn = 1;
+    }
+    boardArray = savedData.boardArray;
+    ResumeGame();
+  } catch (error) {
+    console.log('An error occurred');
+  }
 }
