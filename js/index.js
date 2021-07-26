@@ -3,6 +3,8 @@ var boardArray = CreateBoardArray();
 var turn = 2;
 var player1pieces = 12;
 var player2pieces = 12;
+var player1name = null;
+var player2name = null;
 var validOptionsToMove = [];
 var validOptionsToMoveEating = [];
 var validPiecesToMove = [];
@@ -480,7 +482,20 @@ function HasPiece(cellId) {
     return false;
   }
 }
+function AskForName(message, placeholder) {
+  var value = null;
+  do {
+    value = window.prompt(message, placeholder);
+    value = value.trim();
+  } while (!value);
+  return value;
+}
 function StartNewMatch() {
+  player1name = AskForName("Please enter Player 1's name:", 'Player 1');
+  player2name = AskForName("Please enter Player 2's name:", 'Player 2');
+  document.getElementById('player-1-name').textContent = player1name;
+  document.getElementById('player-2-name').textContent = player2name;
+
   boardArray = CreateBoardArray();
 
   boardArray[0][0] = 1;
