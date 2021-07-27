@@ -13,7 +13,7 @@ var canSelectOtherPieces = true;
 var hasEatingObligation = false;
 var isGameInProgress = false;
 //ESTADO
-var serverUrl = 'https://reqres.in/api/login';
+//var serverUrl = 'https://reqres.in/api/login';
 document.getElementById('start-match').addEventListener('click', StartNewMatch);
 document.getElementById('save-match').addEventListener('click', SaveGame);
 document.getElementById('load-match').addEventListener('click', LoadGame);
@@ -107,10 +107,13 @@ function UpdatePiecesCounter(boardArray) {
   RenderPiecesCounter(player1pieces, player2pieces);
 }
 function RenderPiecesCounter(player1pieces, player2pieces) {
-  document.getElementById('remaining-pieces-player-1').textContent =
-    player1pieces;
-  document.getElementById('remaining-pieces-player-2').textContent =
-    player2pieces;
+  document.getElementById('points-player-1').textContent =
+    CalculatePoints(player2pieces);
+  document.getElementById('points-player-2').textContent =
+    CalculatePoints(player1pieces);
+}
+function CalculatePoints(pieces) {
+  return 12 - pieces;
 }
 function ChangeTurn() {
   turn = turn === 1 ? 2 : 1;
