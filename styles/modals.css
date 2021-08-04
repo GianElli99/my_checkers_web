@@ -11,9 +11,12 @@
 #modal-content {
   background-color: white;
 
-  margin: 0 auto;
+  margin: 5% auto;
+  padding: 0 1rem;
   width: 80%;
   max-width: 600px;
+
+  border-radius: 10px;
 }
 #modal.active-modal {
   display: block;
@@ -21,4 +24,24 @@
 #close-modal {
   cursor: pointer;
   font-weight: 600;
+  font-size: 3rem;
+}
+#modal-content p {
+  font-size: 2rem;
+}
+#modal-title-close {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#modal-content table {
+  width: 100%;
+  table-layout: fixed;
+}
+#modal-content th,
+#modal-content td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
 }

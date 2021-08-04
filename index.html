@@ -74,6 +74,13 @@
         >
           LOAD
         </button>
+        <button
+          id="see-history"
+          class="secondary-button"
+          title="See all finished games"
+        >
+          HISTORY
+        </button>
       </div>
     </main>
     <footer>
@@ -93,8 +100,19 @@
     </footer>
     <div id="modal">
       <div id="modal-content">
-        <p>Modal</p>
-        <span id="close-modal">&times;</span>
+        <div id="modal-title-close">
+          <p>History</p>
+          <span id="close-modal">&times;</span>
+        </div>
+        <table id="history">
+          <tr>
+            <th>Player 1</th>
+            <th>Points</th>
+            <th>Player 2</th>
+            <th>Result</th>
+            <th>Date</th>
+          </tr>
+        </table>
       </div>
     </div>
   </body>

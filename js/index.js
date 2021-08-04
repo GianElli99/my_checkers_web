@@ -33,6 +33,13 @@ function RenderState(boardArray, isTurnFinished) {
   UpdatePiecesCounter(boardArray);
   if ((player1pieces === 0 || player2pieces === 0) && isGameInProgress) {
     isGameInProgress = false;
+    SaveFinishedGame(
+      player1name,
+      GetPoints(),
+      player2name,
+      GetWinner() + ' Wins',
+      Date.now()
+    );
     ShowWinner();
     return;
   }
@@ -40,6 +47,14 @@ function RenderState(boardArray, isTurnFinished) {
     canSelectOtherPieces = true;
     ChangeTurn();
     if (IsDraw()) {
+      isGameInProgress = false;
+      SaveFinishedGame(
+        player1name,
+        GetPoints(),
+        player2name,
+        'Draw',
+        Date.now()
+      );
       ShowDraw();
       return;
     }
@@ -493,7 +508,9 @@ function AskForName(message, placeholder) {
   var value = null;
   do {
     value = window.prompt(message, placeholder);
-    value = value.trim();
+    if (value) {
+      value = value.trim();
+    }
   } while (!value);
   return value;
 }
@@ -592,9 +609,12 @@ function UnHighlightPiece(cellId) {
 }
 function ShowWinner() {
   setTimeout(function () {
-    var winner = player1pieces === 0 ? player2name : player1name;
-    window.alert('The winner is: ' + winner);
+    window.alert('The winner is: ' + GetWinner());
   }, 0);
+}
+function GetWinner() {
+  var winner = player1pieces === 0 ? player2name : player1name;
+  return winner;
 }
 function ShowDraw() {
   setTimeout(function () {
@@ -680,4 +700,29 @@ function IsDraw() {
   validOptionsToMoveEating = [];
 
   return isDraw;
+}
+function SaveFinishedGame(player1name, points, player2name, result, date) {
+  try {
+    var savedData = JSON.parse(localStorage.getItem('history'));
+    if (!savedData) {
+      savedData = [];
+    }
+    savedData.push({
+      player1name: player1name,
+      points: points,
+      player2name: player2name,
+      result: result,
+      date: date,
+    });
+    localStorage.setItem('history', JSON.stringify(savedData));
+  } catch (error) {
+    console.log('An error occurred');
+  }
+}
+function GetPoints() {
+  return (
+    CalculatePoints(player1pieces).toString() +
+    ' - ' +
+    CalculatePoints(player2pieces).toString()
+  );
 }
