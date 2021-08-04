@@ -39,6 +39,10 @@ function RenderState(boardArray, isTurnFinished) {
   if (isTurnFinished) {
     canSelectOtherPieces = true;
     ChangeTurn();
+    if (IsDraw()) {
+      ShowDraw();
+      return;
+    }
     CheckObligationToEat();
   } else {
     canSelectOtherPieces = false;
@@ -592,6 +596,11 @@ function ShowWinner() {
     window.alert('The winner is: ' + winner);
   }, 0);
 }
+function ShowDraw() {
+  setTimeout(function () {
+    window.alert('Oops! The game ended in a draw');
+  }, 0);
+}
 
 function SendDataToServer(url, data) {
   fetch(url, {
@@ -645,4 +654,30 @@ function LoadGame() {
   } catch (error) {
     console.log('An error occurred');
   }
+}
+function IsDraw() {
+  if (!isGameInProgress) {
+    return false;
+  }
+
+  var isDraw = true;
+  for (let row = 0; row < boardArray.length; row++) {
+    for (let col = 0; col < boardArray[row].length; col++) {
+      var cellValue = boardArray[row][col];
+
+      if (cellValue && cellValue.toString().substr(0, 1) === turn.toString()) {
+        cellIdOfSelectedPiece = CreateCellIdFromArrayPos(row, col);
+
+        FindOptions(cellIdOfSelectedPiece, isDamaFromArrayPos(row, col));
+      }
+    }
+  }
+  if (validOptionsToMove.length > 0 || validOptionsToMoveEating.length > 0) {
+    isDraw = false;
+  }
+  cellIdOfSelectedPiece = '';
+  validOptionsToMove = [];
+  validOptionsToMoveEating = [];
+
+  return isDraw;
 }
