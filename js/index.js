@@ -538,6 +538,8 @@ function StartNewMatch() {
 
 function ResumeGame() {
   isGameInProgress = true;
+  document.getElementById('player-1-name').textContent = player1name;
+  document.getElementById('player-2-name').textContent = player2name;
   RenderState(boardArray, true);
 }
 function CheckObligationToEat() {
@@ -585,8 +587,10 @@ function UnHighlightPiece(cellId) {
     ?.firstElementChild?.classList.remove('selected-piece');
 }
 function ShowWinner() {
-  var winner = player1pieces === 0 ? 'Player 2' : 'Player 1';
-  window.alert('The winner is: ' + winner);
+  setTimeout(function () {
+    var winner = player1pieces === 0 ? player2name : player1name;
+    window.alert('The winner is: ' + winner);
+  }, 0);
 }
 
 function SendDataToServer(url, data) {
@@ -617,6 +621,8 @@ function SaveGame() {
     var dataToSave = {
       turn: turn,
       boardArray: boardArray,
+      player1name: player1name,
+      player2name: player2name,
     };
     localStorage.setItem('gameState', JSON.stringify(dataToSave));
   } catch (error) {
@@ -633,6 +639,8 @@ function LoadGame() {
       turn = 1;
     }
     boardArray = savedData.boardArray;
+    player1name = savedData.player1name;
+    player2name = savedData.player2name;
     ResumeGame();
   } catch (error) {
     console.log('An error occurred');
