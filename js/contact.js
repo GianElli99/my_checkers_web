@@ -59,7 +59,7 @@ function ValidateFields(name, email, comment) {
     isValid = false;
     errorMsg += 'Invalid Email. ';
   }
-  if (comment.trim().length < 5) {
+  if (comment.trim().length < 6) {
     isValid = false;
     errorMsg += 'Invalid Comment.';
   }
